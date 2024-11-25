@@ -100,7 +100,9 @@ export default function AgentReport({ report }: Props) {
             fileName={`agent-report-${report.agent.code}.pdf`}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
-            {({ loading }: { loading: boolean }) => (loading ? 'Loading...' : 'Download PDF')}
+            {(props) => (
+              <span>{props.loading ? 'Loading...' : 'Download PDF'}</span>
+            )}
           </PDFDownloadLink>
         </div>
 
