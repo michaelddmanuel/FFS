@@ -17,17 +17,32 @@ const handler = NextAuth({
   },
   callbacks: {
     async session({ session, token }) {
-      return session;
+      try {
+        return session;
+      } catch (error) {
+        console.error('Session callback error:', error);
+        return null;
+      }
     },
     async jwt({ token, user, account }) {
-      if (account && user) {
-        return {
-          ...token,
-          accessToken: account.access_token,
-          userId: user.id,
-        };
+      try {
+        if (account && user) {
+          return {
+            ...token,
+            accessToken: account.access_token,
+            userId: user.id,
+          };
+        }
+        return token;
+      } catch (error) {
+        console.error('JWT callback error:', error);
+        return token;
       }
-      return token;
+    },
+  },
+  events: {
+    async error(error) {
+      console.error('NextAuth error:', error);
     },
   },
 });
