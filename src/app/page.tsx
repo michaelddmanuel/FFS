@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { LandingNav } from '@/components/LandingNav';
+import LandingNav from '@/components/LandingNav';
 
 export default function LandingPage() {
   return (

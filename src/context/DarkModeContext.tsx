@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface DarkModeContextType {
   isDarkMode: boolean;
@@ -10,31 +10,33 @@ interface DarkModeContextType {
 const DarkModeContext = createContext<DarkModeContextType | undefined>(undefined);
 
 export function DarkModeProvider({ children }: { children: React.ReactNode }) {
-  const [isDarkMode, setIsDarkMode] = useState(true); // Set default to true
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    // Check if user has a dark mode preference stored
-    const storedPreference = localStorage.getItem('darkMode');
-    if (storedPreference) {
-      setIsDarkMode(storedPreference === 'true');
+    // Check if user has a dark mode preference in localStorage
+    const storedDarkMode = localStorage.getItem('darkMode');
+    if (storedDarkMode) {
+      setIsDarkMode(JSON.parse(storedDarkMode));
     } else {
-      // If no stored preference, default to dark mode
-      setIsDarkMode(true);
-      localStorage.setItem('darkMode', 'true');
+      // Check system preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDarkMode(prefersDark);
     }
   }, []);
 
   useEffect(() => {
+    // Update document class when dark mode changes
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-    localStorage.setItem('darkMode', isDarkMode.toString());
+    // Save preference to localStorage
+    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
   }, [isDarkMode]);
 
   const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
+    setIsDarkMode((prev) => !prev);
   };
 
   return (
