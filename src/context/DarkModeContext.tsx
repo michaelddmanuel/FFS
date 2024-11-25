@@ -11,6 +11,7 @@ const DarkModeContext = createContext<DarkModeContextType | undefined>(undefined
 
 export function DarkModeProvider({ children }: { children: React.ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     // Check if user has a dark mode preference in localStorage
@@ -22,9 +23,12 @@ export function DarkModeProvider({ children }: { children: React.ReactNode }) {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setIsDarkMode(prefersDark);
     }
+    setMounted(true);
   }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+    
     // Update document class when dark mode changes
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
@@ -33,11 +37,16 @@ export function DarkModeProvider({ children }: { children: React.ReactNode }) {
     }
     // Save preference to localStorage
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
-  }, [isDarkMode]);
+  }, [isDarkMode, mounted]);
 
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
   };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <DarkModeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
