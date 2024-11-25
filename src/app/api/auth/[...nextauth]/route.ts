@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { Session, DefaultSession } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
 const handler = NextAuth({
@@ -16,12 +16,12 @@ const handler = NextAuth({
     newUser: '/auth/new-user',
   },
   callbacks: {
-    async session({ session, token }) {
+    async session({ session }) {
       try {
         return session;
       } catch (error) {
         console.error('Session callback error:', error);
-        return null;
+        return session; // Return session instead of null to maintain type safety
       }
     },
     async jwt({ token, user, account }) {
