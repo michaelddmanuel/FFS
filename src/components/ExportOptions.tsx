@@ -1,67 +1,52 @@
 'use client';
 
 import { useState } from 'react';
-import { SalesData } from '@/types';
-import { exportToExcel, exportToPDF } from '@/utils/exportUtils';
+import { exportToExcel } from '@/utils/exportUtils';
+import { SalesData } from '@/types/sales';
 
-interface ExportOptionsProps {
+interface Props {
   data: SalesData[];
+  fileName?: string;
 }
 
-export function ExportOptions({ data }: ExportOptionsProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function ExportOptions({ data, fileName = 'sales_report' }: Props) {
+  const [isExporting, setIsExporting] = useState(false);
 
-  const handleExport = async (format: 'xlsx' | 'pdf') => {
-    const timestamp = new Date().toISOString().split('T')[0];
-    const fileName = `sales_report_${timestamp}`;
-
+  const handleExport = async () => {
+    setIsExporting(true);
     try {
-      if (format === 'xlsx') {
-        exportToExcel(data, fileName);
-      } else {
-        exportToPDF(data, fileName);
-      }
+      exportToExcel(data, fileName);
     } catch (error) {
-      console.error('Error exporting file:', error);
-      // You might want to add proper error handling/notification here
+      console.error('Export failed:', error);
+    } finally {
+      setIsExporting(false);
     }
   };
 
   return (
-    <div className="relative">
+    <div className="flex gap-4">
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="px-4 py-2 text-sm font-medium text-white bg-meta-500 rounded-lg hover:bg-meta-600 dark:bg-meta-400 dark:hover:bg-meta-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-meta-500 dark:focus:ring-meta-400"
+        onClick={handleExport}
+        disabled={isExporting}
+        className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        Export Report
+        {isExporting ? (
+          <>
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Exporting...
+          </>
+        ) : (
+          <>
+            <svg className="-ml-1 mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+            Export as Excel
+          </>
+        )}
       </button>
-
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
-          <div className="py-1" role="menu" aria-orientation="vertical">
-            <button
-              onClick={() => {
-                handleExport('xlsx');
-                setIsOpen(false);
-              }}
-              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              role="menuitem"
-            >
-              Export as Excel (.xlsx)
-            </button>
-            <button
-              onClick={() => {
-                handleExport('pdf');
-                setIsOpen(false);
-              }}
-              className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              role="menuitem"
-            >
-              Export as PDF
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
