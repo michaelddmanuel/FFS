@@ -1,22 +1,33 @@
 import * as XLSX from 'xlsx';
-import { SalesData } from '@/types/sales';
+import { SalesData } from '@/types';
 
-export const exportToExcel = (data: SalesData[], fileName: string = 'sales_report') => {
-  // Convert data to worksheet format
-  const worksheet = XLSX.utils.json_to_sheet(data.map(item => ({
-    'Agent Code': item.agent.code,
-    'Agent Name': item.agent.name,
-    'Total Sales': item.totalSales,
-    'Total Commissions': item.totalCommissions,
-    'Sales Count': item.salesCount,
-    'Average Sale Value': item.averageSaleValue,
-    'Performance Score': item.performanceScore
-  })));
+export const exportToExcel = async (data: SalesData[]) => {
+  try {
+    const workbook = XLSX.utils.book_new();
+    
+    // Transform data for Excel
+    const excelData = data.map(sale => ({
+      'Date': sale.date,
+      'Type': sale.type,
+      'Agent Code': sale.agent.code,
+      'Agent Name': sale.agent.name,
+      'Policy Number': sale.policy.policyNumber,
+      'Customer ID': sale.policy.customerIdNumber,
+      'Customer Name': `${sale.policy.customerName} ${sale.policy.customerSurname}`,
+      'Policy Amount': sale.policy.policyAmount,
+      'Collection Method': sale.policy.collectionMethod,
+      'Start Date': sale.policy.startDate,
+    }));
 
-  // Create workbook and append worksheet
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales Data');
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
 
-  // Generate Excel file
-  XLSX.writeFile(workbook, `${fileName}.xlsx`);
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sales Data');
+
+    // Generate Excel file
+    XLSX.writeFile(workbook, 'sales_report.xlsx');
+  } catch (error) {
+    console.error('Error exporting to Excel:', error);
+    throw error;
+  }
 };
