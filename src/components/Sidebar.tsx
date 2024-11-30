@@ -53,7 +53,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-800">
         <h1 className="text-xl font-bold bg-gradient-to-br from-meta-500 to-meta-700 dark:from-meta-400 dark:to-meta-600 bg-clip-text text-transparent">
-          Sales Dashboard
+          FFS Sale Report
         </h1>
       </div>
 

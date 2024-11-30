@@ -18,7 +18,7 @@ export function Header({ showUploadButton, onUploadClick, onUseSampleData }: Hea
               <div className="relative h-8 w-8 rounded-lg bg-meta-500" />
             </div>
             <span className="text-xl font-semibold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-              Sales Dashboard
+              FFS Sale Report
             </span>
           </div>
         </div>

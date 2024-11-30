@@ -42,7 +42,7 @@ export function UploadPrompt({ onUploadClick, onUseSampleData }: UploadPromptPro
               {/* Text */}
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold bg-gradient-to-br from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                  Welcome to Sales Dashboard
+                  Welcome to FFS Sale Report
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400">
                   Upload your sales report or use sample data to get started
